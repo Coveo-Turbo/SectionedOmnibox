@@ -1,0 +1,1 @@
+export {IconPrefixedElement} from './IconPrefixedElement';

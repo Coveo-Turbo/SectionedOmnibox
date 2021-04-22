@@ -1,0 +1,73 @@
+#standaloneSearchbox {
+  
+  .CoveoOmnibox.magic-box.magic-box-inline {
+    width: calc(100% - 65px);
+    max-width: 475px;
+    margin-left: auto;
+
+    .magic-box-suggestions.suggestions-section {
+      margin-top: 20px;
+      width: 600px;
+      margin-left: -30px;
+      height: 500px;
+      background: #ffffff;
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+      border-radius: 4px;
+    }
+
+    .coveo-suggested-result {
+      /* font-family: Salesforce Sans; */
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px;
+      letter-spacing: 0px;
+      text-align: left;
+      color: black;
+      text-decoration: none;
+      text-decoration: none;
+    }
+
+    .coveo-suggested-result a:link {
+      text-decoration: none;
+    }
+
+    .MoreButton {
+      /* Auto Layout */
+      /* display: flex; */
+
+      display: none;
+      flex-direction: row;
+      align-items: center;
+      padding: 1px 16px;
+      position: absolute;
+      height: 32px;
+      background: #0070d2;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+    }
+  }
+
+  .CoveoOmniboxSection {
+    padding: 20px;
+  }
+  .CoveoOmniboxSection.hidden {
+    display: none;
+  }
+
+  .CoveoOmnibox.magic-box-suggestions.suggestions-section .magic-box-hasSuggestion.expanded,
+  .CoveoOmnibox.magic-box.magic-box-inline.magic-box-hasFocus .magic-box-suggestions.suggestions-section.magic-box-hasSuggestion {
+    display: none;
+  }
+
+  .magic-box-suggestions.suggestions-section.expanded.magic-box-hasSuggestion {
+    display: none;
+  }
+
+  .CoveoOmnibox.magic-box.magic-box-inline.magic-box-hasFocus.magic-box-notEmpty
+    .magic-box-suggestions.suggestions-section.magic-box-hasSuggestion {
+    display: block;
+  }
+}
