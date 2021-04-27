@@ -200,7 +200,10 @@ export class OmniboxMatchedContents extends Component {
     }
 
     private buildDataToSendDuringQuery(query: IQuery, searchPromise: Promise<IQueryResults>): Coveo.IDuringQueryEventArgs {
-        let searchAsYouType = (<Coveo.Searchbox>Coveo.get(<HTMLElement>document.querySelector('.CoveoSearchbox'), 'Searchbox')).options.enableSearchAsYouType;
+        let searchAsYouType: boolean = false;
+        if (document.querySelector('.CoveoSearchbox') != null)
+            searchAsYouType= (<Coveo.Searchbox>Coveo.get(<HTMLElement>document.querySelector('.CoveoSearchbox'), 'Searchbox')).options.enableSearchAsYouType;
+
         let qb: Coveo.QueryBuilder = new Coveo.QueryBuilder();
 
         if (!query.q) {
@@ -219,9 +222,9 @@ export class OmniboxMatchedContents extends Component {
 
     private mapQueryResult(result: IQueryResult, index: number, text: string): IOmniboxSuggestion {
         const template = this.OmniboxSuggestedResultTemplateResolver.resolveByResult(result);
-        const displaytext:  string = result.title;
+        let html: string = '<div class="coveo-suggested-result"> <a class="title" href="'+ result.clickUri +'"> '+ result.title + '</a> </div>';        
 
-        let html: string = template.render({text, ...result});
+        //let html: string = template.render({text, ...result});
         return <IOmniboxSuggestion>{
             html: html,
             text: result.title,

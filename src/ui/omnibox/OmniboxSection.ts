@@ -65,7 +65,7 @@ export class OmniboxSection extends Component {
             if (icon) {
                 new IconPrefixedElement(h3, {icon, iconType, iconPath}, this.getBindings());
             }
-            this.element.prepend(h3);
+            this.element.insertBefore(h3, this.element.firstElementChild);
         }    
     }
 

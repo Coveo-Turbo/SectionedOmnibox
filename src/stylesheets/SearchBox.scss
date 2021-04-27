@@ -11,17 +11,15 @@
   }
 }
 #standaloneSearchbox {
-  .magic-box.magic-box-inline {
-    .magic-box-input,
-    .magic-box-icon {
-      height: 38px;
-      line-height: 38px;
-    }
+  .magic-box-input,
+  .magic-box-icon {
+    height: 38px;
+    line-height: 38px;
+  }
 
-    .magic-box-input {
-      border-top-left-radius: 50px;
-      border-bottom-left-radius: 50px;
-    }
+  .magic-box-input {
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
   }
 
   .CoveoSearchButton.coveo-accessible-button {

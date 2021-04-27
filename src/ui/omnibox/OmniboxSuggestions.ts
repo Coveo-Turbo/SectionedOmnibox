@@ -56,7 +56,9 @@ export class OmniboxSuggestions extends Component {
     constructor(public element: HTMLElement, public options: IOmniboxSuggestionsOptions, bindings?: IComponentBindings, public result?: IQueryResult) {
         super(element, OmniboxSuggestions.ID, bindings);
         this.options = ComponentOptions.initComponentOptions(element, OmniboxSuggestions, options);
+        
         this.bind.onRootElement(Coveo.OmniboxEvents.populateOmniboxSuggestions, (args: Coveo.IPopulateOmniboxSuggestionsEventArgs) => this.handlePopulateOmniboxSuggestions(args));
+        
         this.bind.onRootElement(Coveo.InitializationEvents.afterComponentsInitialization, () => this.handleAfterComponentInitialization());
 
         this.templateResolver = new OmniboxSuggestedResultTemplateResolver();
@@ -96,6 +98,7 @@ export class OmniboxSuggestions extends Component {
         }
         let fragment = new DocumentFragment();
         fragment.appendChild(section);
+
         suggestionsListEl.appendChild(fragment);
     }
 
@@ -113,7 +116,7 @@ export class OmniboxSuggestions extends Component {
         relatedSearchesSectionEl.appendChild(sectionWrapper);
         fragment.appendChild(relatedSearchesSectionEl);
 
-        suggestionsListEl.prepend(fragment);
+        suggestionsListEl.insertBefore(relatedSearchesSectionEl, suggestionsListEl.firstElementChild )
     }
 
     private sortSections(sections: string[] = []) {
@@ -182,7 +185,10 @@ export class OmniboxSuggestions extends Component {
         let { suggestions, omnibox } = args;
         const text = omnibox.getText();
         this.toggleExpandedMode(text);
-        suggestions.push(this.formatSuggestions(suggestions.pop(), text));
+
+        /* Removes null promises */
+        let filteredSuggestions = suggestions.filter(function (t) {return t!=null});
+        suggestions.push(this.formatSuggestions(filteredSuggestions.pop(), text));
     }
 
     private toggleExpandedMode(text: string) {
@@ -201,7 +207,8 @@ export class OmniboxSuggestions extends Component {
     private formatBaseSuggestions(baseSuggestions: Coveo.Suggestion[]): Coveo.Suggestion[] {
         return baseSuggestions.map(({ html, text }) => {
             const template = this.templateResolver.resolveByType('base');
-            html = template.render({ text: html })
+         //   html = template.render({ text: html })
+            html = ""
 
             return { html, text };
         });
@@ -209,6 +216,7 @@ export class OmniboxSuggestions extends Component {
 
     private async formatSuggestions(baseSuggestions, text) {
         baseSuggestions = await Promise.resolve(baseSuggestions);
+        baseSuggestions = []
         //baseSuggestions = this.prepareBaseSuggestions(baseSuggestions);
         const target = this.options.target;
 
