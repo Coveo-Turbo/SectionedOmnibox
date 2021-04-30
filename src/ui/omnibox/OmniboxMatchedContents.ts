@@ -7,13 +7,15 @@ import {
     IPopulateOmniboxSuggestionsEventArgs,
     IOmniboxSuggestion,
     IQueryResult,
+    IQueryResults,
     IQuery,
     INewQueryEventArgs} from "coveo-search-ui"
 
 import { OmniboxSuggestionsCache } from './OmniboxSuggestionsCache';
 import OmniboxSuggestedResultTemplateResolver from './OmniboxSuggestedResultTemplateResolver';
 import { OmniboxSuggestionsUpdatedEvent } from './events';
-import { IQueryResults } from 'coveo-search-ui';
+import { debounce, once} from 'underscore';
+
 
 export interface IOmniboxMatchedContentsOptions {
     numberOfQueries: number;
@@ -98,11 +100,20 @@ export class OmniboxMatchedContents extends Component {
     }
 
     private handleSuggestionRedirect(args: INewQueryEventArgs) {
+        let textContent : string = "";
         const searchbox = <HTMLElement>document.querySelector('.CoveoSearchbox .magic-box-input');
+        const standalonesearchbox = <HTMLElement>document.querySelector('.CoveoStandaloneSearchbox  .magic-box-input');
+
+        if (searchbox) {
+            textContent = searchbox.textContent;
+        }
+        else if (standalonesearchbox) {
+            textContent = standalonesearchbox.textContent.trim();
+        }
     
-        if (searchbox.textContent != "" && this.firstSuggestion) {
+        if (textContent != "" && this.firstSuggestion) {
             args.cancel = true;
-            this.onSearchSuggestionsSelection(this.firstSuggestion);
+            //this.onSearchSuggestionsSelection(this.firstSuggestion);
         }
     }
 
@@ -234,7 +245,7 @@ export class OmniboxMatchedContents extends Component {
     }
 
     private onSearchSuggestionsSelection(result: IQueryResult) {
-        const executeOnlyOnce = _.once(() => this.logClickEvent(result));
+        const executeOnlyOnce = once(() => this.logClickEvent(result));
         executeOnlyOnce();
     
         if (this.options.openNewTab) {
@@ -252,12 +263,11 @@ export class OmniboxMatchedContents extends Component {
         window.open(uri, '_blank');
     };
     
-    private logClickEvent = _.debounce(
+    private logClickEvent = debounce(
         (queryResult: IQueryResult) => {
-            let rootElement = Coveo.get(document.getElementById('coveostandalonesearchbox'), 'SearchInterface').element;
+            let rootElement = Coveo.get(document.querySelector('.CoveoSearchInterface'), 'SearchInterface').element
             let clickEventCause: Coveo.IAnalyticsActionCause = { name: 'documentOpenSuggestedResultsSearch', type: 'document' };
             Coveo.logClickEvent(rootElement, clickEventCause, {}, queryResult);
-
             Coveo.Defer.flush();
         },
         2500,
