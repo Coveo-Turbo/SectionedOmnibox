@@ -1,6 +1,6 @@
 {
     "name": "@coveops/sectioned-omnibox",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Provides a sectioned omnibox for the Coveo platform.",
     "main": "dist/index.js",
     "scripts": {
