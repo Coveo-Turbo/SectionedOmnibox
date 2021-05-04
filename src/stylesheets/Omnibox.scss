@@ -28,23 +28,6 @@
     .coveo-suggested-result a:link {
       text-decoration: none;
     }
-
-    .MoreButton {
-      /* Auto Layout */
-      /* display: flex; */
-
-      display: none;
-      flex-direction: row;
-      align-items: center;
-      padding: 1px 16px;
-      position: absolute;
-      height: 32px;
-      background: #0070d2;
-      border-radius: 50px;
-      color: white;
-      cursor: pointer;
-      user-select: none;
-    }
   }
 
   .CoveoOmnibox.magic-box-suggestions.suggestions-section .magic-box-hasSuggestion.expanded,

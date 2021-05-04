@@ -47,7 +47,7 @@ export class OmniboxMatchedContents extends Component {
             defaultValue: {}
         }),
         fieldsToInclude: ComponentOptions.buildStringOption({
-            defaultValue: 'title'
+            defaultValue: 'title, source'
         }),
         target: ComponentOptions.buildStringOption(),
     };
@@ -55,18 +55,26 @@ export class OmniboxMatchedContents extends Component {
     constructor(public element: HTMLElement, public options: IOmniboxMatchedContentsOptions, public bindings: IComponentBindings) {
         super(element, OmniboxMatchedContents.ID, bindings);
         this.options = ComponentOptions.initComponentOptions(element, OmniboxMatchedContents, options);
-        this.bind.onRootElement(Coveo.QueryEvents.newQuery, (args: INewQueryEventArgs) => this.handleSuggestionRedirect(args));
+        this.validateFieldsToInclude();
         this.bind.onRootElement(OmniboxEvents.populateOmniboxSuggestions, (args: IPopulateOmniboxSuggestionsEventArgs) => this.handleQuerySuggestions(args));
+    }
+
+    private validateFieldsToInclude () {
+        var splitarray : string[] = this.options.fieldsToInclude.split(",");
+        if (splitarray.indexOf("title") == -1)
+            splitarray.push("title")
+        if (splitarray.indexOf("source") == -1)
+            splitarray.push("source")
+        this.options.fieldsToInclude = splitarray.join(",")
     }
 
     private render(items = []) {
         let fragment = new DocumentFragment();
-
         const container = $$('div', { class: 'coveo-magicbox-suggestions suggestions-section' }).el;
         
         items.forEach(({html, onSelect}) => { 
             const listDecorator = $$('div', {className: 'magic-box-suggestion', role: 'option'}, html);
-            listDecorator.on('click keyboardSelect', () => onSelect());
+            listDecorator.on('click', () => onSelect());
             container.appendChild(listDecorator.el);
             fragment.appendChild(container);
         });
@@ -97,24 +105,6 @@ export class OmniboxMatchedContents extends Component {
         this.render(suggestedResults);
 
         this.bind.trigger(this.root, OmniboxSuggestionsUpdatedEvent.omniboxSuggestionsUpdated, {numberOfResults: suggestedResults.length, text, target});
-    }
-
-    private handleSuggestionRedirect(args: INewQueryEventArgs) {
-        let textContent : string = "";
-        const searchbox = <HTMLElement>document.querySelector('.CoveoSearchbox .magic-box-input');
-        const standalonesearchbox = <HTMLElement>document.querySelector('.CoveoStandaloneSearchbox  .magic-box-input');
-
-        if (searchbox) {
-            textContent = searchbox.textContent;
-        }
-        else if (standalonesearchbox) {
-            textContent = standalonesearchbox.textContent.trim();
-        }
-    
-        if (textContent != "" && this.firstSuggestion) {
-            args.cancel = true;
-            //this.onSearchSuggestionsSelection(this.firstSuggestion);
-        }
     }
 
     //Probably a bug with the dynamic sorting sections, the element gets orphaned on the DOM and we need to reassign it.
@@ -232,10 +222,11 @@ export class OmniboxMatchedContents extends Component {
     }
 
     private mapQueryResult(result: IQueryResult, index: number, text: string): IOmniboxSuggestion {
-        const template = this.OmniboxSuggestedResultTemplateResolver.resolveByResult(result);
+        //const template = this.OmniboxSuggestedResultTemplateResolver.resolveByResult(result);
+        //let html: string = template.render({text, ...result});
+
         let html: string = '<div class="coveo-suggested-result"> <a class="title" href="'+ result.clickUri +'"> '+ result.title + '</a> </div>';        
 
-        //let html: string = template.render({text, ...result});
         return <IOmniboxSuggestion>{
             html: html,
             text: result.title,
@@ -247,7 +238,7 @@ export class OmniboxMatchedContents extends Component {
     private onSearchSuggestionsSelection(result: IQueryResult) {
         const executeOnlyOnce = once(() => this.logClickEvent(result));
         executeOnlyOnce();
-    
+        
         if (this.options.openNewTab) {
             this.openLinkInNewWindow(result.clickUri);
         } else {
