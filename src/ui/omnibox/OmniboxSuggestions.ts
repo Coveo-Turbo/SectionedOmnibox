@@ -119,15 +119,6 @@ export class OmniboxSuggestions extends Component {
         suggestionsListEl.insertBefore(relatedSearchesSectionEl, suggestionsListEl.firstElementChild )
     }
 
-    private sortSections(sections: string[] = []) {
-        const suggestionsListEl: HTMLElement = <HTMLElement>document.querySelector('div.magic-box-suggestions');
-        let fragment = new DocumentFragment();
-        let elements = sections.map(section => document.getElementById(section));
-        elements.forEach(element => fragment.append(element));
-
-        suggestionsListEl.appendChild(fragment);
-    }
-
     private handleAfterComponentInitialization() {
 
         this.renderHtml();
@@ -193,7 +184,6 @@ export class OmniboxSuggestions extends Component {
 
     private toggleExpandedMode(text: string) {
         const resultContainer = document.querySelector('.magic-box-suggestions.magic-box-hasSuggestion');
-
         if (!resultContainer) {
             return;
         }
